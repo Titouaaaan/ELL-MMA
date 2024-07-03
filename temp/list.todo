@@ -1,0 +1,38 @@
+Ctrl+enter for new task, Alt+d for done
+
+----------------------------------------
+
+PROJECT STEP 1:
+
+✔ define task distrubution for different teaching agents @done (7/2/2024, 3:19:51 PM)
+    -t: conversational, reading
+    -m: listening, QA, GrammarSummary
+    -common: tracker, orchestrator, communicator TBD 
+
+☐ add to folder existing uml diagrams @low 
+
+✔ join/create slack channel @done (7/2/2024, 3:24:51 PM)
+
+☐ restructure to get a graph for single chatbot @high 
+
+✔ design uml diagram for conversational diagram @done (7/2/2024, 3:22:17 PM)
+
+☐ create Github repo @critical 
+
+☐ add raw dataset to folder @critical 
+
+☐ test prompt in luxembourgish instead of english @high 
+
+☐ create first prototype for conversational agent: @high 
+    ☐ redesign prompt to follow flow chart
+    ☐ test for french
+    ☐ test for luxembourgish
+    ☐ test with raw data from the lux language books
+
+☐ create first prototype for reading agent: @high 
+    ☐ test for french (since i can't read luxembourgish)
+    ☐ test for luxembourgish
+    ☐ fine tune the prompt 
+    ☐ test with raw data from the lux language books
+
+☐ work on methodology section of report @low 
