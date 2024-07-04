@@ -11,13 +11,17 @@ PROJECT STEP 1:
 
 ☐ add to folder existing uml diagrams @low 
 
+☐ create one shared global list: written by orchester and read by tutor agent (content of all lessons)
+
+☐ 
+
 ✔ join/create slack channel @done (7/2/2024, 3:24:51 PM)
 
-☐ restructure to get a graph for single chatbot @high 
+✔ restructure to get a graph for single chatbot @high @done (7/4/2024, 10:30:29 AM)
 
 ✔ design uml diagram for conversational diagram @done (7/2/2024, 3:22:17 PM)
 
-☐ create Github repo @critical 
+✔ create Github repo @critical @done (7/4/2024, 10:30:24 AM)
 
 ☐ add raw dataset to folder @critical 
 
