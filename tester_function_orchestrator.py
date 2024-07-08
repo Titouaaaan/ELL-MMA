@@ -105,7 +105,7 @@ prompt = '''steps to follow to seprate the text:
             OUTPUT ONLY THE TWO LISTS
             '''
 
-
+#! THIS IS LANGCHAIN SYNTAX NEED TO MODIFY
 def content_extraction(text, prompt):
     try:
         response = client.chat.completions.create(
