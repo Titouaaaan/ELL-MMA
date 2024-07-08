@@ -13,6 +13,8 @@ PROJECT STEP 1:
 
 ✔ create one shared global list: written by orchester and read by tutor agent (content of all lessons) @done (7/4/2024, 5:36:33 PM)
 
+☐ ISSUE: occasionally langgraph doesnt display the AI message as intented -> asks for input but doesnt show the generate prompt first 
+
 ☐ create @tool that checks if all tutors where executed -> consequence: create final report and end
 
 ✔ join/create slack channel @done (7/2/2024, 3:24:51 PM)
