@@ -11,6 +11,18 @@ PROJECT STEP 1:
 
 ☐ add to folder existing uml diagrams @low 
 
+☐ conversational: prompt rework, focus on conversational aspect (not just teaching a lesson)
+
+☐ orchestrator: optimize speed of tool (too slow atm, 40sec to a min sometimes for chunk seperation)
+
+☐ orchestrator: modify tool to retrieve from vector store instead of .txt file
+
+☐ tracker: implement/modify report creation tool to write report in json file
+
+☐ tracker: prompt engineering
+
+☐ communicator: create agent/node structure with user communication feature
+
 ✔ create one shared global list: written by orchester and read by tutor agent (content of all lessons) @done (7/4/2024, 5:36:33 PM)
 
 ☐ ISSUE: occasionally langgraph doesnt display the AI message as intented -> asks for input but doesnt show the generate prompt first 
@@ -25,20 +37,8 @@ PROJECT STEP 1:
 
 ✔ create Github repo @critical @done (7/4/2024, 10:30:24 AM)
 
-☐ add raw dataset to folder @critical 
+✔ add raw dataset to folder @critical @done (7/9/2024, 3:13:13 PM)
 
-☐ test prompt in luxembourgish instead of english @high 
-
-☐ create first prototype for conversational agent: @high 
-    ☐ redesign prompt to follow flow chart
-    ☐ test for french
-    ☐ test for luxembourgish
-    ☐ test with raw data from the lux language books
-
-☐ create first prototype for reading agent: @high 
-    ☐ test for french (since i can't read luxembourgish)
-    ☐ test for luxembourgish
-    ☐ fine tune the prompt 
-    ☐ test with raw data from the lux language books
+✔ test prompt in luxembourgish instead of english @high @done (7/9/2024, 3:13:16 PM)
 
 ☐ work on methodology section of report @low 
