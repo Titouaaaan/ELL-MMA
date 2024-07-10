@@ -19,7 +19,7 @@ PROJECT STEP 1:
 
 ☐ tracker: implement/modify report creation tool to write report in json file
 
-☐ tracker: prompt engineering
+✔ tracker: prompt engineering @done (7/10/2024, 4:20:18 PM)
 
 ☐ communicator: create agent/node structure with user communication feature
 
