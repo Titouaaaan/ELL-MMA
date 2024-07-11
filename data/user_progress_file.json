@@ -1,0 +1,16 @@
+{
+    "001": {
+        "Kapitel": 1,
+        "Thema": "Moien! ... an Addi!",
+        "Agent": "conversational",
+        "goals": "teach the user greetings",
+        "feedback": "The user successfully learned greetings."
+    },
+    "002": {
+        "Kapitel": 2,
+        "Thema": "Wéi ass d'Telefonsnummer?",
+        "Agent": "listening",
+        "goals": "teach the user about numbers",
+        "feedback": "The listening exercises were effective, but more examples would be beneficial."
+    }
+}

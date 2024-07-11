@@ -1,0 +1,16 @@
+{
+    "001": {
+        "name": "Doe",
+        "firstname": "John",
+        "nationality": "American",
+        "native_language": "English",
+        "purpose_of_learning": "work"
+    },
+    "002": {
+        "name": "Smith",
+        "firstname": "Jane",
+        "nationality": "British",
+        "native_language": "English",
+        "purpose_of_learning": "vacation"
+    }
+}

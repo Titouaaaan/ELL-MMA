@@ -9,6 +9,8 @@ PROJECT STEP 1:
     -m: listening, QA, GrammarSummary
     -common: tracker, orchestrator, communicator TBD 
 
+☐ error handling to deal with hallucinations @critical 
+
 ☐ add to folder existing uml diagrams @low 
 
 ☐ conversational: prompt rework, focus on conversational aspect (not just teaching a lesson)
