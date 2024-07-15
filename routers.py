@@ -30,9 +30,12 @@ def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
     if "REPORT DONE" in last_message.content:
         return "FINAL REPORT"
     elif "USER TURN":
+        #! So this print statement here should be what is being returned to the front end !!
         print('AI ASSISTANT: ', last_message.content)
+
         time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
         print('You:')
+        #! and this here should be a get request to the front end !!
         user_input = input()
         #print('YOU: ', user_input)
         #add this to messages
@@ -84,9 +87,11 @@ def communicator_router(state) -> Literal['continue', 'go_orchestrator', 'call_t
         return "call_tool"
     if 'go_orchestrator' in last_message.content:
         return 'go_orchestrator'
+    #! So this print statement here should be what i
     print('AI ASSISTANT: ', last_message.content)
     time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
     print('You:')
+    #! and this here should be a get request to the front end !!
     user_input = input()
     # print('YOU: ', user_input)
     #add this to messages

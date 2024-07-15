@@ -209,6 +209,7 @@ for s in graph.stream(
             ]
         }, {"recursion_limit": 100} #maybe increase this if we want to do large tests
     ):
+        #print('THIS IS A TEST TO SEE VALUE OF s: ', s)
         if "__end__" not in s:
             print(s)
             print("----")
