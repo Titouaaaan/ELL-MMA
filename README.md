@@ -1,5 +1,7 @@
-Project Description:
-Abstract. The intersection of Artificial Intelligence (AI) and education
+# Project Description:
+
+## Abstract. 
+The intersection of Artificial Intelligence (AI) and education
 is transforming learning and teaching, with generative AI and large lan-
 guage models (LLMs) offering new possibilities. AI and LLMs personal-
 ize learning through adaptive study guides, instant feedback, automated
@@ -28,9 +30,11 @@ Our approach employs complex LLM workflows as multi-agent collabo-
 rations for reading, conversing, listening, and mastering grammar, based
 on GPT-4o, enhanced by Retrieval-Augmented Generation (RAG) and
 voice recognition features.
-Keywords: LLMs · MAS · BPMN · RAG.
 
-report link:
+### Keywords: 
+LLMs · MAS · BPMN · RAG.
+
+### report link:
 https://www.overleaf.com/project/6687d7e743c43e829e68264e
 
 # How to Run the Code
@@ -51,7 +55,7 @@ Download Postman: www.postman.com
 
 ## 3. Start the Application
 To start the application, use uvicorn, an ASGI server for serving FastAPI applications. Run the following command in your terminal:
-'''bash
+'''
 uvicorn mainapp:app --reload
 '''
 
@@ -69,7 +73,7 @@ POST /startConversation: Start the conversation.
 URL: http://localhost:8000/startConversation
 Method: POST
 Body: 
-'''bash
+'''
 {"startBool": true, "userID": "example_user_id"}
 '''
 
@@ -84,7 +88,7 @@ POST /acknowledgeMessage: Send acknowledgment after receiving the AI message.
 URL: http://localhost:8000/acknowledgeMessage
 Method: POST
 Body: 
-'''bash 
+'''
 {"ack": true}
 '''
 
@@ -92,7 +96,7 @@ POST /userInput: Send user input after acknowledgment.
 URL: http://localhost:8000/userInput
 Method: POST
 Body: 
-'''bash
+'''
 {"content": "This is the user input"}
 '''
 
