@@ -20,7 +20,7 @@ def route_to_tutor(state) -> Literal["conversational", "no_more_lesson"]:
     print('testing start_signal output: ', messages[-1].content)
     return [messages[-1].content]
 
-def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
+async def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
     ''' BUG: sometimes the tutor starts the convo without calling its tool, fix asap @urgent'''
     #? create seperate router for each tutor agent or generalise it? -should be able to generalize
     print('-- tutor agent router --')
@@ -39,7 +39,7 @@ def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
         time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
         print('You:')
         #! and this here should be a get request to the front end !!
-        user_input = input()
+        user_input = await message_state.wait_for_input()
         #print('YOU: ', user_input)
         #add this to messages
         last_message.content += " user response: " + user_input
@@ -82,7 +82,7 @@ def orchestrator_router(state) -> Literal['continue_to_tracker', 'call_tool']:
         # clear_memory(memory=memory, thread_id="123456", thread_ts="123456")
         return 'continue_to_tracker'
     
-def communicator_router(state) -> Literal['continue', 'go_orchestrator', 'call_tool']:
+async def communicator_router(state) -> Literal['continue', 'go_orchestrator', 'call_tool']:
     print('-- communicator router --')
     messages = state['messages']
     last_message = messages[-1]
@@ -98,7 +98,7 @@ def communicator_router(state) -> Literal['continue', 'go_orchestrator', 'call_t
     time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
     print('You:')
     #! and this here should be a get request to the front end !!
-    user_input = input()
+    user_input = await message_state.wait_for_input()
     # print('YOU: ', user_input)
     #add this to messages
     last_message.content += " user response: " + user_input

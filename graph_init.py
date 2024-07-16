@@ -224,8 +224,11 @@ class ConversationRequest(BaseModel):
     startBool: bool
     userID: str
 
+class UserInputRequest(BaseModel):
+    content: str
+
 async def continue_graph_execution(messages):
-    for s in graph.stream({"messages": messages}, {"recursion_limit": 100}):
+    async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
         if "__end__" not in s:
             print(s)
             print("----")
@@ -257,3 +260,11 @@ async def get_ai_message():
     }
     print('exiting get function...')
     return JSONResponse(content=response_payload, status_code=200)
+
+@app.post("/userInput")
+async def receive_user_input(request: UserInputRequest):
+    try:
+        message_state.update_user_input(request.content)
+        return JSONResponse(content={"message": "User input received"}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
