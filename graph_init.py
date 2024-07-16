@@ -11,7 +11,16 @@ from langgraph.checkpoint import *
 from routers import *
 from agents import *
 from tools import *
-from api_functions import app
+
+import logging
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+import asyncio
+
+from state import message_state
+
+app = FastAPI()
 
 os.environ["LANGSMITH_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
@@ -204,14 +213,47 @@ workflow.add_edge(START, "communicator")
 
 graph = workflow.compile() #checkpointer=memory
 
-# for s in graph.stream( 
-#         {
-#             "messages": [
-#                 HumanMessage(content=f"Communicator, the user ID is {userID}. Please start with your task.")
-#             ]
-#         }, {"recursion_limit": 100} #maybe increase this if we want to do large tests
-#     ):
-#         #print('THIS IS A TEST TO SEE VALUE OF s: ', s)
-#         if "__end__" not in s:
-#             print(s)
-#             print("----")
+# Configure logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+
+class ConversationRequest(BaseModel):
+    startBool: bool
+    userID: str
+
+async def continue_graph_execution(messages):
+    for s in graph.stream({"messages": messages}, {"recursion_limit": 100}):
+        if "__end__" not in s:
+            print(s)
+            print("----")
+            # Update the shared state with the current content and agent name
+            await asyncio.sleep(0)  # Yield control to the event loop
+
+
+@app.post("/startConversation")
+async def begin_graph_stream(request: ConversationRequest, background_tasks: BackgroundTasks):
+    if request.startBool:
+        try:
+            messages = [
+                HumanMessage(content=f"Communicator, the user ID is {request.userID}. Please start with your task.")
+            ]
+            background_tasks.add_task(continue_graph_execution, messages)
+            return JSONResponse(content={"message": "Conversation started"}, status_code=200)
+        except Exception as e:
+            return JSONResponse(content={"error": str(e)}, status_code=500)
+    else:
+        raise HTTPException(status_code=400, detail="startBool must be true")
+
+@app.get("/getAIMessage")
+async def get_ai_message():
+    print('entering get function...')
+    message_data = await message_state.wait_for_update()
+    response_payload = {
+        "agent_name": message_data["agent_name"],
+        "content": message_data["content"]
+    }
+    print('exiting get function...')
+    return JSONResponse(content=response_payload, status_code=200)

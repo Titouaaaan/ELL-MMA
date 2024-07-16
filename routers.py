@@ -1,7 +1,7 @@
 
 import time
 from typing import Literal
-from api_functions import getHumanMessage, sendAIMessage
+from state import message_state
 
 # define the router function
 def router_tracker(state) -> Literal["call_tool", "kill_process"]:
@@ -33,6 +33,8 @@ def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
     elif "USER TURN":
         #! So this print statement here should be what is being returned to the front end !!
         print('AI ASSISTANT: ', last_message.content)
+        
+        message_state.update_content(last_message.content, last_message.name)
 
         time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
         print('You:')
@@ -90,6 +92,9 @@ def communicator_router(state) -> Literal['continue', 'go_orchestrator', 'call_t
         return 'go_orchestrator'
     #! So this print statement here should be what i
     print('AI ASSISTANT: ', last_message.content)
+
+    message_state.update_content(last_message.content, last_message.name)
+
     time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
     print('You:')
     #! and this here should be a get request to the front end !!
