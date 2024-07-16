@@ -1,26 +1,30 @@
+'''
+The graph is being created here, and then being imported in the mainapp file. 
+This ensure that mainapp.py is not bloated with code
+The graph creation is rather standard for langgraph
+All tools, routers and agents prompts are created in other files
+'''
+
 import os
-from langgraph.graph import StateGraph, END
-from langchain_core.messages import (
-    HumanMessage,
-)
-from langgraph.prebuilt import ToolNode
-from langgraph.graph import END, StateGraph, START
 import functools
+
+#langgraph imports
+from langgraph.graph import StateGraph, END, START
+from langgraph.prebuilt import ToolNode
 from langchain_openai import ChatOpenAI
-from langgraph.checkpoint import *
+
+# imports from other files
 from routers import *
 from agents import *
 from tools import *
+
 os.environ["LANGSMITH_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "tutor agents"
 os.environ["OPENAI_API_KEY"] = "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"
+
 GPT_MODEL = "gpt-4o"
 llm = ChatOpenAI(model=GPT_MODEL)
-
-global_prompts_list =[]
-agent_activation_order = []
-userID = '001'
 
 communicator_agent = create_agent(
     agentName='communicator', 
@@ -188,7 +192,6 @@ workflow.add_conditional_edges(
 )
 
 workflow.add_conditional_edges(
-    #! for mutliple agents: USE LAMBDA EXPRESSION TO ALWAYS SEND MSG BACK TO SENDER + no need to send back agent type in get prompt
     "tutor_call_tool",
     route_back_to_tutor,
     {'conversational': 'conversational', 
@@ -200,16 +203,4 @@ workflow.add_conditional_edges(
 
 workflow.add_edge(START, "communicator")
 
-graph = workflow.compile() #checkpointer=memory
-
-for s in graph.stream( 
-        {
-            "messages": [
-                HumanMessage(content=f"Communicator, the user ID is {userID}. Please start with your task.")
-            ]
-        }, {"recursion_limit": 100} #maybe increase this if we want to do large tests
-    ):
-        #print('THIS IS A TEST TO SEE VALUE OF s: ', s)
-        if "__end__" not in s:
-            print(s)
-            print("----")
+graph = workflow.compile() 

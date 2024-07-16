@@ -139,8 +139,8 @@ def getTutorPrompt() -> str:
     # print(f'BEFORE RETRIEVAL: \ncontents = {global_prompts_list} \nagents = {agent_activation_order}')
     global_prompts_list.pop(0)
     agent_name = agent_activation_order[0]
-    #debugging
-    print(f"Retrieved content {prompt} for agent {agent_name}")
+    # debugging
+    # print(f"Retrieved content {prompt} for agent {agent_name}")
     agent_activation_order.pop(0)
     #print(f'AFTER RETRIEVAL: \ncontents = {global_prompts_list} \nagents = {agent_activation_order}')
     return agent_name + ' lesson: ' + prompt #what is gonna be returned to the tutor agent
