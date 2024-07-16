@@ -32,3 +32,71 @@ Keywords: LLMs · MAS · BPMN · RAG.
 
 report link:
 https://www.overleaf.com/project/6687d7e743c43e829e68264e
+
+# How to Run the Code
+Prerequisites: To run this application, you will need to install the required libraries and tools. Follow the steps below:
+
+ ## 1. Install Required Libraries
+This project relies on several Python libraries. You can install them using pip. Make sure you have Python 3.7 or later installed.
+-fastapi
+-uvicorn
+-pydantic
+-langgraph/langchain
+-openai
+
+## 2. Install Postman
+Postman is a popular tool for testing APIs. It allows you to send HTTP requests to your API endpoints and inspect the responses. You can download Postman from the official website:
+
+Download Postman: www.postman.com
+
+## 3. Start the Application
+To start the application, use uvicorn, an ASGI server for serving FastAPI applications. Run the following command in your terminal:
+'''bash
+uvicorn mainapp:app --reload
+'''
+
+mainapp is the name of your Python file without the .py extension (replace it with the appropriate filename if it's different).
+app is the FastAPI instance defined in your mainapp.py.
+--reload enables auto-reloading, which is useful during development.
+The application will start and be accessible at http://127.0.0.1:8000.
+
+## 4. Sending Requests with Postman
+Once the application is running, you can interact with it using Postman:
+
+1/ This is done only once to start the backend loop
+POST /startConversation: Start the conversation.
+
+URL: http://localhost:8000/startConversation
+Method: POST
+Body: 
+'''bash
+{"startBool": true, "userID": "example_user_id"}
+'''
+
+2/ The next three messages are used for user/agent communication
+The order must always be: getAIMessages, acknowledgeMessage, userInput
+
+GET /getAIMessage: Retrieve the latest AI message.
+URL: http://localhost:8000/getAIMessage
+Method: GET
+
+POST /acknowledgeMessage: Send acknowledgment after receiving the AI message.
+URL: http://localhost:8000/acknowledgeMessage
+Method: POST
+Body: 
+'''bash 
+{"ack": true}
+'''
+
+POST /userInput: Send user input after acknowledgment.
+URL: http://localhost:8000/userInput
+Method: POST
+Body: 
+'''bash
+{"content": "This is the user input"}
+'''
+
+Send the Request:
+
+Click the "Send" button to send the request to your API endpoint.
+Review the response in the lower section of Postman.
