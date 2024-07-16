@@ -227,6 +227,9 @@ class ConversationRequest(BaseModel):
 class UserInputRequest(BaseModel):
     content: str
 
+class AcknowledgmentRequest(BaseModel):
+    ack: bool
+
 async def continue_graph_execution(messages):
     async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
         if "__end__" not in s:
@@ -266,5 +269,16 @@ async def receive_user_input(request: UserInputRequest):
     try:
         message_state.update_user_input(request.content)
         return JSONResponse(content={"message": "User input received"}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+@app.post("/acknowledgeMessage")
+async def acknowledge_message(request: AcknowledgmentRequest):
+    try:
+        if request.ack:
+            message_state.acknowledge_message()
+            return JSONResponse(content={"message": "Acknowledgment received"}, status_code=200)
+        else:
+            raise HTTPException(status_code=400, detail="Acknowledgment must be true")
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)

@@ -36,7 +36,8 @@ async def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"
         
         message_state.update_content(last_message.content, last_message.name)
 
-        time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
+        await message_state.wait_for_acknowledgment()
+
         print('You:')
         #! and this here should be a get request to the front end !!
         user_input = await message_state.wait_for_input()
@@ -95,7 +96,8 @@ async def communicator_router(state) -> Literal['continue', 'go_orchestrator', '
 
     message_state.update_content(last_message.content, last_message.name)
 
-    time.sleep(1) #! just to check if its a speed problem, THIS SHOULD NOT BE IN THE FINAL PROTOTYPE/DEMO
+    await message_state.wait_for_acknowledgment()
+
     print('You:')
     #! and this here should be a get request to the front end !!
     user_input = await message_state.wait_for_input()
