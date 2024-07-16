@@ -11,6 +11,8 @@ from langgraph.checkpoint import *
 from routers import *
 from agents import *
 from tools import *
+from api_functions import app
+
 os.environ["LANGSMITH_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "tutor agents"
@@ -202,14 +204,14 @@ workflow.add_edge(START, "communicator")
 
 graph = workflow.compile() #checkpointer=memory
 
-for s in graph.stream( 
-        {
-            "messages": [
-                HumanMessage(content=f"Communicator, the user ID is {userID}. Please start with your task.")
-            ]
-        }, {"recursion_limit": 100} #maybe increase this if we want to do large tests
-    ):
-        #print('THIS IS A TEST TO SEE VALUE OF s: ', s)
-        if "__end__" not in s:
-            print(s)
-            print("----")
+# for s in graph.stream( 
+#         {
+#             "messages": [
+#                 HumanMessage(content=f"Communicator, the user ID is {userID}. Please start with your task.")
+#             ]
+#         }, {"recursion_limit": 100} #maybe increase this if we want to do large tests
+#     ):
+#         #print('THIS IS A TEST TO SEE VALUE OF s: ', s)
+#         if "__end__" not in s:
+#             print(s)
+#             print("----")
