@@ -42,11 +42,11 @@ Prerequisites: To run this application, you will need to install the required li
 
  ## 1. Install Required Libraries
 This project relies on several Python libraries. You can install them using pip. Make sure you have Python 3.7 or later installed.
--fastapi
--uvicorn
--pydantic
--langgraph/langchain
--openai
+*fastapi
+*uvicorn
+*pydantic
+*langgraph/langchain
+*openai
 
 ## 2. Install Postman
 Postman is a popular tool for testing APIs. It allows you to send HTTP requests to your API endpoints and inspect the responses. You can download Postman from the official website:
@@ -55,9 +55,9 @@ Download Postman: www.postman.com
 
 ## 3. Start the Application
 To start the application, use uvicorn, an ASGI server for serving FastAPI applications. Run the following command in your terminal:
-'''
+```
 uvicorn mainapp:app --reload
-'''
+```
 
 mainapp is the name of your Python file without the .py extension (replace it with the appropriate filename if it's different).
 app is the FastAPI instance defined in your mainapp.py.
@@ -73,9 +73,9 @@ POST /startConversation: Start the conversation.
 URL: http://localhost:8000/startConversation
 Method: POST
 Body: 
-'''
+```
 {"startBool": true, "userID": "example_user_id"}
-'''
+```
 
 2/ The next three messages are used for user/agent communication
 The order must always be: getAIMessages, acknowledgeMessage, userInput
@@ -88,17 +88,17 @@ POST /acknowledgeMessage: Send acknowledgment after receiving the AI message.
 URL: http://localhost:8000/acknowledgeMessage
 Method: POST
 Body: 
-'''
+```
 {"ack": true}
-'''
+```
 
 POST /userInput: Send user input after acknowledgment.
 URL: http://localhost:8000/userInput
 Method: POST
 Body: 
-'''
+```
 {"content": "This is the user input"}
-'''
+```
 
 Send the Request:
 
