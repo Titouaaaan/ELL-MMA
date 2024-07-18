@@ -1,0 +1,154 @@
+<!-- python -m http.server 8000 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ccc;
+            margin: 20px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .human-message {
+            align-self: flex-end;
+            background-color: #e0e0e0;
+        }
+        .ai-message {
+            align-self: flex-start;
+            background-color: #cfe9ff;
+        }
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #controls input, #controls button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <input type="text" id="userID" placeholder="Enter User ID" required>
+        <button onclick="startConversation()">Start Conversation</button>
+        <input type="text" id="userInput" placeholder="Type your message here" required>
+        <button onclick="sendUserInput()">Send Message</button>
+    </div>
+    <div id="chat-container"></div>
+
+    <script>
+        async function startConversation() {
+            const userID = document.getElementById('userID').value;
+            const startBool = true;
+
+            const response = await fetch('/startConversation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userID, startBool })
+            });
+
+            const result = await response.json();
+            if (result.message) {
+                displayMessage(`Conversation started with User ID: ${userID}`, 'system-message');
+                await getAIMessage();
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function sendUserInput() {
+            const content = document.getElementById('userInput').value;
+
+            if (!content) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            displayMessage(content, 'human-message');
+
+            const response = await fetch('/userInput', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content })
+            });
+
+            const result = await response.json();
+            if (result.message) {
+                document.getElementById('userInput').value = '';
+                await getAIMessage();
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function getAIMessage() {
+            const response = await fetch('/getAIMessage', {
+                method: 'GET',
+            });
+
+            const result = await response.json();
+            if (result.agent_name && result.content) {
+                displayMessage(`${result.agent_name}: ${result.content}`, 'ai-message');
+                await acknowledgeMessage();
+            } else {
+                console.error("Error getting AI message:", result);
+            }
+        }
+
+        async function acknowledgeMessage() {
+            const ack = true;
+
+            const response = await fetch('/acknowledgeMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ack })
+            });
+
+            const result = await response.json();
+            if (result.message) {
+                console.log("Message acknowledged");
+            } else {
+                console.error("Error acknowledging message:", result.error);
+            }
+        }
+
+        function displayMessage(content, className) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${className}`;
+            messageDiv.innerText = content;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
