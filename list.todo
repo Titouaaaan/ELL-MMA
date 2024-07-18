@@ -2,6 +2,13 @@ Ctrl+enter for new task, Alt+d for done
 
 ----------------------------------------
 
+BUGS THAT NEED TO BE FIXED:
+☐ openai.InternalServerError: Error code: 500 - 
+  {'error': {'message': 'The model produced invalid content. Consider modifying your prompt 
+  if you are seeing this error persistently.', 'type': 'model_error', 'param': None, 'code': None}}
+  -> Apparently this is a openai problem, see link
+  https://community.openai.com/t/error-the-model-produced-invalid-content/747511/6
+
 PROJECT STEP 1:
 
 ✔ define task distrubution for different teaching agents @done (7/2/2024, 3:19:51 PM)

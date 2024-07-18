@@ -5,6 +5,9 @@ TODO: add more documentation to the routers, mostly rename variable for more cla
 
 from typing import Literal
 from state import message_state
+from langchain_core.messages import (
+    AIMessage,
+)
 
 # define the router function
 def router_tracker(state) -> Literal["call_tool", "kill_process"]:
@@ -28,25 +31,32 @@ async def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"
     print('-- tutor agent router --')
     messages = state["messages"]
     last_message = messages[-1]
+
     if last_message.tool_calls:
         return "call_tool"
+    
     if "REPORT DONE" in last_message.content:
         return "FINAL REPORT"
+
+    if isinstance(last_message, AIMessage) and last_message.content != '':
+        print('succesful test')
+        # THIS IS TO UPDATE THE LAST MESSAGE TO THEN SEND IT TO THE CLIENT
+        message_state.update_content(last_message.content, last_message.name)
+        # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
+        await message_state.wait_for_acknowledgment()
+
     elif "USER TURN":
         # DEBUGGING
         print('AI ASSISTANT: ', last_message.content)
-        
-        # THIS IS TO UPDATE THE LAST MESSAGE TO THEN SEND IT TO THE CLIENT
-        message_state.update_content(last_message.content, last_message.name)
-        # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE 
-        await message_state.wait_for_acknowledgment()
 
         print('You:')
         # WAIT FOR THE CLIENT TO SEND THE USER INPUT
         user_input = await message_state.wait_for_input()
+        print(user_input)
       
         last_message.content += " user response: " + user_input
         return "continue" 
+    
     return "call_tool" #forcing call tool (sometimes agent starts conversation anyways, need to fix that)
 
 def route_back_to_tutor(state) -> Literal['conversational', 'reader', 'listening', 'grammarSummary', 'questionAnswering']:
@@ -88,20 +98,32 @@ async def communicator_router(state) -> Literal['continue', 'go_orchestrator', '
     print('-- communicator router --')
     messages = state['messages']
     last_message = messages[-1]
+
     if last_message.tool_calls:
         return "call_tool"
-    if 'go_orchestrator' in last_message.content:
-        return 'go_orchestrator'
-    print('AI ASSISTANT: ', last_message.content)
-
-    # THIS IS TO UPDATE THE LAST MESSAGE TO THEN SEND IT TO THE CLIENT
-    message_state.update_content(last_message.content, last_message.name)
-    # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
-    await message_state.wait_for_acknowledgment()
-
-    print('You:')
-    # WAIT FOR THE CLIENT TO SEND THE USER INPUT
-    user_input = await message_state.wait_for_input()
     
-    last_message.content += " user response: " + user_input
-    return 'continue'
+    if 'go_orchestrator' in last_message.content:
+        print('AI ASSISTANT: lecture content \n', last_message.content)
+        msg = last_message.content.replace('go_orchestrator', '')
+        # THIS IS TO UPDATE THE LAST MESSAGE TO THEN SEND IT TO THE CLIENT
+        message_state.update_content(msg, last_message.name)
+        # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
+        await message_state.wait_for_acknowledgment()
+        return 'go_orchestrator'
+
+    if isinstance(last_message, AIMessage) and last_message.content != '':
+        # THIS IS TO UPDATE THE LAST MESSAGE TO THEN SEND IT TO THE CLIENT
+        message_state.update_content(last_message.content, last_message.name)
+        # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
+        await message_state.wait_for_acknowledgment()
+
+        #debugging
+        print('AI ASSISTANT: ', last_message.content)
+
+        print('You:')
+        # WAIT FOR THE CLIENT TO SEND THE USER INPUT
+        user_input = await message_state.wait_for_input()
+        print(user_input)
+        
+        last_message.content += " user response: " + user_input
+        return 'continue'
