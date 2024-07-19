@@ -8,6 +8,7 @@ All tools, routers and agents prompts are created in other files
 import os
 import functools
 
+from Tutors_prompts import Conversational_Agent_Prompt,Reader_Agent_Prompt,Listening_Agent_Prompt,QA_Agent_Prompt
 #langgraph imports
 from langgraph.graph import StateGraph, END, START
 from langgraph.prebuilt import ToolNode
@@ -57,7 +58,7 @@ conversational_agent = create_tutor_agent(
     agentName='conversational',
     llm=llm,
     tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the conversational agent, your job is to teach the lesson to the student through conversation. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    system_message=Conversational_Agent_Prompt
 )
 
 conversational_node = functools.partial(agent_node, agent=conversational_agent, name='conversational')
@@ -66,7 +67,7 @@ reader_agent = create_tutor_agent(
     agentName='reader',
     llm=llm,
     tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the reader agent, your job is to teach the lesson to the student through reading comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    system_message=Reader_Agent_Prompt # add 'in Luxembourgish' for final tests
 )
 
 reader_node = functools.partial(agent_node, agent=reader_agent, name='reader')
@@ -75,7 +76,7 @@ listening_agent = create_tutor_agent(
     agentName='listening',
     llm=llm,
     tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the listening agent, your job is to teach the lesson to the student through listening comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    system_message=Listening_Agent_Prompt
 )
 
 listening_node = functools.partial(agent_node, agent=listening_agent, name='listening')
@@ -84,7 +85,7 @@ question_answering_agent = create_tutor_agent(
     agentName='questionAnswering',
     llm=llm,
     tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the question answering agent, your job is to teach the lesson to the student through question answering comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    system_message=QA_Agent_Prompt
 )
 
 question_answering_node = functools.partial(agent_node, agent=question_answering_agent, name='questionAnswering')

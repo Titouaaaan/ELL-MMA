@@ -3,6 +3,11 @@ from langchain_core.tools import tool
 import json
 from langgraph.checkpoint import *
 import re
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+import chromadb
+from langchain.embeddings import HuggingFaceBgeEmbeddings
+
 
 GPT_MODEL = "gpt-4o"
 
@@ -60,34 +65,30 @@ def getChunks(query: str) -> str:
     #print('seperating chunks...')
     ''' add: fulldata -> apply query -> get all_contents (filtered in this case)'''
 
-    with open('data/relevant_content.txt', 'r') as file: #this will diretcly be the output of the filtered DATA after query
-        text = file.read()
+    model_name = "BAAI/bge-large-en-v1.5"
+    encode_kwargs = {'normalize_embeddings': True} # set True to compute cosine similarity
+    model_norm = HuggingFaceBgeEmbeddings(
+        model_name=model_name,
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs=encode_kwargs
+    )
+    embeddings = model_norm
+    persist_directory = "data/bge_test_"
+    vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+    retriever = vectordb.as_retriever(search_kwargs={"k": 7})
+    docs = retriever.get_relevant_documents("Kapitel: 1\nThema: Vu wou kommt Dir?\nKategorie : Gespréich\nAgent: Konversatiouns-Agent")
 
-    prompt = f'''steps to follow to seprate the text:
-            YOU MUST ONLY RETRIEVE CONTENT LINKED TO THE QUERY:
-            {query},
-            -GROUP BY kapitel
-            -then GROUP BY thema
-            -then GROUP BY kategorie
-            -for each group YOU MUSY CHOOSE the agent that is most present
-            -KEEP THE ORDER of the contents
-            STRUCTURE of ouput:
-            1. list of Agent names (your options are: conversational, reader, listener, questionAnswering and GrammarSummary)
-            2. list raw content of ONLY the inhalt of the group 
-            DO NOT PUT COMMAS , IN THE RAW CONTENT
-            MAKE SURE that each agent's content FITS IN ONE ELEMENT OF THE LIST
-            THE TWO LISTS SHOULD BE OF THE SAME SIZE
-            template to use as an example:
-            [conversational, reader, ...]
-            ['raw content for conversational', 'raw content for reader',...]
-            OUTPUT ONLY THE TWO LISTS
+
+
+    prompt = f'''I have a collection of documents and I need to filter them based on a specific query. 
+    The query is: {query}. Please provide only the list of documents that are relevant to this query.
             '''
     try:
         response = OpenAI().chat.completions.create(
             model= GPT_MODEL,
             messages=[
                 {"role": "system", "content": prompt},  # IN THEORY this prompt works (could use 1.few shots or 2.fine tuning for larger datasets)
-                {"role": "user", "content": text}
+                {"role": "user", "content": docs}
             ],
             temperature=0.0,
         )
