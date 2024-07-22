@@ -1,3 +1,0 @@
-*.pth filter=lfs diff=lfs merge=lfs -text
-tts/*.pth filter=lfs diff=lfs merge=lfs -text
-tts/best_model.pth filter=lfs diff=lfs merge=lfs -text
