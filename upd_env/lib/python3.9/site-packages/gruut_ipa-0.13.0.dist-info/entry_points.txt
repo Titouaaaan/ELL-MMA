@@ -1,0 +1,2 @@
+[console_scripts]
+gruut-ipa = gruut_ipa.__main__:main

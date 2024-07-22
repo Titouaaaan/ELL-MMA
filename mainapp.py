@@ -15,6 +15,7 @@ from graph_creation import graph
 
 # FastAPI imports
 import logging
+import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse, FileResponse
@@ -22,8 +23,15 @@ from fastapi.staticfiles import StaticFiles
 import asyncio
 
 from state import message_state
+from tts.tts import setupTTS, speak
 
 app = FastAPI()
+
+try:
+    print("[INFO] - Setting Up TTS")
+    synthesizer = setupTTS()
+except Exception as e:
+    print(str(e))
 
 global_prompts_list =[]
 agent_activation_order = []
@@ -46,6 +54,9 @@ class UserInputRequest(BaseModel):
 
 class AcknowledgmentRequest(BaseModel):
     ack: bool
+    
+class MessageRequest(BaseModel):
+    message: str
 
 async def continue_graph_execution(messages):
     async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
@@ -99,6 +110,18 @@ async def acknowledge_message(request: AcknowledgmentRequest):
             raise HTTPException(status_code=400, detail="Acknowledgment must be true")
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+    
+@app.post("/tts")
+async def text_to_speech(request: MessageRequest):
+    try:
+        output_file = "output.wav"
+        speak(synthesizer=synthesizer, text=request.message)
+        if os.path.exists(output_file):
+            return FileResponse(output_file, media_type='audio/wav', filename=output_file)
+        else:
+            raise HTTPException(status_code=500, detail="Audio file not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
 @app.get("/")
 async def read_index():
