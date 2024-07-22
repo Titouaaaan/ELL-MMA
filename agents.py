@@ -12,8 +12,11 @@ from typing import Sequence
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import ToolMessage
 from langgraph.checkpoint import *
+from dotenv import load_dotenv
 
-llm = ChatOpenAI(model="gpt-4o")
+load_dotenv()
+
+llm = ChatOpenAI(model="gpt-4o", )
 
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]

@@ -42,11 +42,19 @@ Prerequisites: To run this application, you will need to install the required li
 
  ## 1. Install Required Libraries
 This project relies on several Python libraries. You can install them using pip. Make sure you have Python 3.7 or later installed.
-*fastapi
-*uvicorn
-*pydantic
-*langgraph/langchain
-*openai
+- fastapi
+- uvicorn
+- pydantic
+- langgraph/langchain
+- openai
+
+to do so run the following command:
+
+```
+pip install -r requirements.txt
+```
+
+REMINDER: you will also need to create a .env file at the root of the project and add your OPENAI_API_KEY
 
 ## 2. Install Postman
 Postman is a popular tool for testing APIs. It allows you to send HTTP requests to your API endpoints and inspect the responses. You can download Postman from the official website:
