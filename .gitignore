@@ -1,3 +1,5 @@
 .env
 *.wav
 *.pth
+mma_env/
+upd_env/
