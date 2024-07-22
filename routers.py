@@ -45,8 +45,6 @@ async def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"
         # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
         await message_state.wait_for_acknowledgment()
 
-    elif "USER TURN":
-        # DEBUGGING
         print('AI ASSISTANT: ', last_message.content)
 
         print('You:')

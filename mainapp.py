@@ -59,12 +59,20 @@ class MessageRequest(BaseModel):
     message: str
 
 async def continue_graph_execution(messages):
-    async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
-        if "__end__" not in s:
-            print(s)
-            print("----")
-            # Update the shared state with the current content and agent name
-            await asyncio.sleep(0)  # Yield control to the event loop
+    try:
+        async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
+            if "__end__" not in s:
+                print(s)
+                print("----")
+                # Update the shared state with the current content and agent name
+                await asyncio.sleep(0)  # Yield control to the event loop
+    except KeyError as e:
+        logger.error(f"KeyError encountered: {e}")
+        logger.debug(f"Messages: {messages}")
+        raise
+    except Exception as e:
+        logger.error(f"Exception encountered: {e}")
+        raise
 
 
 @app.post("/startConversation")
