@@ -17,7 +17,8 @@ from graph_creation import graph
 import logging
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import asyncio
 
 from state import message_state
@@ -33,6 +34,8 @@ logging.basicConfig(level=logging.INFO,
 
 # Create a logger object
 logger = logging.getLogger(__name__)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class ConversationRequest(BaseModel):
     startBool: bool
@@ -96,3 +99,7 @@ async def acknowledge_message(request: AcknowledgmentRequest):
             raise HTTPException(status_code=400, detail="Acknowledgment must be true")
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+    
+@app.get("/")
+async def read_index():
+    return FileResponse('static/index.html')

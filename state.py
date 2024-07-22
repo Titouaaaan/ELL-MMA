@@ -38,6 +38,7 @@ class MessageState:
         self.content = new_content
         self.agent_name = new_agent_name
         self.event.set()
+        print('successfully updated content!')
 
     async def wait_for_input(self):
         """
