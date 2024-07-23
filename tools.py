@@ -3,8 +3,15 @@ from langchain_core.tools import tool
 import json
 from langgraph.checkpoint import *
 import re
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import OpenAIEmbeddings
+import chromadb
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+from state import message_state
+import ast
 
-GPT_MODEL = "gpt-4o"
+
+GPT_MODEL = "gpt-4-turbo"
 
 @tool
 def getFiles(userID: str) -> str:
@@ -60,50 +67,79 @@ def getChunks(query: str) -> str:
     #print('seperating chunks...')
     ''' add: fulldata -> apply query -> get all_contents (filtered in this case)'''
 
-    with open('data/relevant_content.txt', 'r') as file: #this will diretcly be the output of the filtered DATA after query
-        text = file.read()
+    model_name = "BAAI/bge-large-en-v1.5"
+    encode_kwargs = {'normalize_embeddings': True} # set True to compute cosine similarity
+    model_norm = HuggingFaceBgeEmbeddings(
+        model_name=model_name,
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs=encode_kwargs
+    )
+    embeddings = model_norm
+    persist_directory = "data/bge_test_"
+    vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+    retriever = vectordb.as_retriever(search_kwargs={"k": 3})
+    docs = retriever.invoke(query)
 
-    prompt = f'''steps to follow to seprate the text:
-            YOU MUST ONLY RETRIEVE CONTENT LINKED TO THE QUERY:
-            {query},
-            -GROUP BY kapitel
-            -then GROUP BY thema
-            -then GROUP BY kategorie
-            -for each group YOU MUSY CHOOSE the agent that is most present
-            -KEEP THE ORDER of the contents
-            STRUCTURE of ouput:
-            1. list of Agent names (your options are: conversational, reader, listener, questionAnswering and GrammarSummary)
-            2. list raw content of ONLY the inhalt of the group 
-            DO NOT PUT COMMAS , IN THE RAW CONTENT
-            MAKE SURE that each agent's content FITS IN ONE ELEMENT OF THE LIST
-            THE TWO LISTS SHOULD BE OF THE SAME SIZE
-            template to use as an example:
-            [conversational, reader, ...]
-            ['raw content for conversational', 'raw content for reader',...]
-            OUTPUT ONLY THE TWO LISTS
+    new_docs = '' #change name
+    for doc in docs:
+        new_docs += doc.page_content
+
+    print('--retrieved docs: \n')
+    print(new_docs)
+
+    print('\n\n')
+
+    message_state.update_content('succesfully retrieved content!', 'system')
+    # # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
+    # await message_state.wait_for_acknowledgment()
+
+    prompt = f'''for this query : {query} you decide witch chunk is adequate and relevant . 
+    A chunk of content is a raw block of test preceded by a kapitel and a thema.
+    For each chunk, assign an agent to this chunk. Keep ALL OF THE INHALT of a content block
+    Agent names must be strictly (exact same spelling) one of 'conversational', 'listening', 'reader', 'questionAnswering', 'grammarSummary'
+    Make sure they are strings 
+
+    output template:
+    [agent1, agent2, agent3 ...] 
+    [content1, content2, content3 ...] (raw content from the retrieved docs), each contentN needs to match agentN)
+
+    IT IS MANDATORY THAT both lists are THE SAME SIZE
+    OUTPUT ONLY THE TWO LISTS
             '''
     try:
         response = OpenAI().chat.completions.create(
             model= GPT_MODEL,
             messages=[
                 {"role": "system", "content": prompt},  # IN THEORY this prompt works (could use 1.few shots or 2.fine tuning for larger datasets)
-                {"role": "user", "content": text}
+                {"role": "user", "content": new_docs}
             ],
             temperature=0.0,
         )
-        llm_output = response.choices[0].message.content # == ' list 1\n list2 '
-        matches = re.findall(r'\[([^]]+)\]', llm_output)
-        agents = matches[0].split(',')
-        agents = [s.replace(' ', '') for s in agents]
-        contents = matches[1].split(',')
-        # print(type(list1), list1)
-        # print(type(list2), list2)
-        global global_prompts_list 
-        global_prompts_list = contents
+        print("\n\n\n the output \n\n\n ")
+        print(response.choices[0].message.content)
+        print("\n\n\n")
+
+        output_string = response.choices[0].message.content # == ' list 1\n list2 '
+        # Applying regex patterns to extract the lists
+        list1_matches = re.findall(r'"\s*([^"]+?)\s*"', output_string.splitlines()[0])
+        list2_matches = re.findall(r'"\s*([^"]+?)\s*"', output_string.splitlines()[1])
 
         global agent_activation_order
-        agent_activation_order = agents
+
+        global global_prompts_list
+
+        # Using ast.literal_eval to safely evaluate the lists
+        agent_activation_order = ast.literal_eval('[' + ', '.join(f'"{m}"' for m in list1_matches) + ']')
+        global_prompts_list = ast.literal_eval('[' + ', '.join(f'"{m}"' for m in list2_matches) + ']')
+        
+
         #check that the two lists are properly configured
+        print('Testing getChunks output:')
+        for elem in global_prompts_list:
+            print('-----')
+            print(elem)
+        print(agent_activation_order)
+
         assert len(global_prompts_list) == len(agent_activation_order), f'should have as many topics as tutor lessons!, {len(global_prompts_list), len(agent_activation_order)}'
         return 'continue'
     except Exception as e:
@@ -132,7 +168,7 @@ def start_signal() -> str:
 this function will probably need some tuning and tests to ensure there are no problems coming from the orchester
 '''
 @tool 
-def getTutorPrompt() -> str:
+def getLearningContent() -> str:
     ''' return the first element of the global prompts list '''
     prompt = global_prompts_list[0] # -> 'Content' -> retrive content
     assert type(prompt) == str, 'prompt is not a string...'

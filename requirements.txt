@@ -1,11 +1,14 @@
 TTS
+sentence_transformers
 aiohttp
 aiosignal
+aiosqlite
 annotated-types
 anyio
 attrs
 certifi
 charset-normalizer
+chromadb
 click
 distro
 dnspython
@@ -25,6 +28,7 @@ langchain
 langchain-core
 langchain-openai
 langchain-text-splitters
+langchain_community
 langgraph
 langsmith
 markdown-it-py
@@ -55,7 +59,6 @@ typer
 typing_extensions
 urllib3
 uvicorn
-uvloop
 watchfiles
 websockets
 yarl

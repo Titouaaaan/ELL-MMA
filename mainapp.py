@@ -59,8 +59,9 @@ class MessageRequest(BaseModel):
     message: str
 
 async def continue_graph_execution(messages):
+    config = {"configurable": {"thread_id": "1"}, "recursion_limit": 1000}
     try:
-        async for s in graph.astream({"messages": messages}, {"recursion_limit": 100}):
+        async for s in graph.astream({"messages": messages}, config=config):
             if "__end__" not in s:
                 print(s)
                 print("----")

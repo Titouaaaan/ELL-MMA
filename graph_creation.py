@@ -8,10 +8,12 @@ All tools, routers and agents prompts are created in other files
 import os
 import functools
 
+from Tutors_prompts import Conversational_Agent_Prompt,Reader_Agent_Prompt,Listening_Agent_Prompt,QA_Agent_Prompt
 #langgraph imports
 from langgraph.graph import StateGraph, END, START
 from langgraph.prebuilt import ToolNode
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.aiosqlite import AsyncSqliteSaver
 
 # imports from other files
 from routers import *
@@ -25,11 +27,14 @@ os.environ["LANGCHAIN_PROJECT"] = "tutor agents"
 GPT_MODEL = "gpt-4o"
 llm = ChatOpenAI(model=GPT_MODEL)
 
+#set up the memory
+memory = AsyncSqliteSaver.from_conn_string(":memory:")
+
 communicator_agent = create_agent(
     agentName='communicator', 
     llm=llm, 
     tools=[getFiles], 
-    system_message="You are the communicator agent, your job is to communicate with the user to generate a learning recommendation for them " #* to be redefined later
+    system_message="You are the communicator agent, your job is to communicate with the user in Luxembourgish to generate a learning recommendation for them " #* to be redefined later
     )
 
 communicator_node = functools.partial(agent_node, agent=communicator_agent, name='communicator')
@@ -55,8 +60,8 @@ tracker_node = functools.partial(agent_node, agent=tracker_agent, name='tracker'
 conversational_agent = create_tutor_agent(
     agentName='conversational',
     llm=llm,
-    tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the conversational agent, your job is to teach the lesson to the student through conversation. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    tools=[getLearningContent, create_progress_report],
+    system_message=Conversational_Agent_Prompt
 )
 
 conversational_node = functools.partial(agent_node, agent=conversational_agent, name='conversational')
@@ -64,8 +69,8 @@ conversational_node = functools.partial(agent_node, agent=conversational_agent, 
 reader_agent = create_tutor_agent(
     agentName='reader',
     llm=llm,
-    tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the reader agent, your job is to teach the lesson to the student through reading comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    tools=[getLearningContent, create_progress_report],
+    system_message=Reader_Agent_Prompt # add 'in Luxembourgish' for final tests
 )
 
 reader_node = functools.partial(agent_node, agent=reader_agent, name='reader')
@@ -73,8 +78,8 @@ reader_node = functools.partial(agent_node, agent=reader_agent, name='reader')
 listening_agent = create_tutor_agent(
     agentName='listening',
     llm=llm,
-    tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the listening agent, your job is to teach the lesson to the student through listening comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    tools=[getLearningContent, create_progress_report],
+    system_message=Listening_Agent_Prompt
 )
 
 listening_node = functools.partial(agent_node, agent=listening_agent, name='listening')
@@ -82,8 +87,8 @@ listening_node = functools.partial(agent_node, agent=listening_agent, name='list
 question_answering_agent = create_tutor_agent(
     agentName='questionAnswering',
     llm=llm,
-    tools=[getTutorPrompt, create_progress_report],
-    system_message="You are the question answering agent, your job is to teach the lesson to the student through question answering comprehension. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
+    tools=[getLearningContent, create_progress_report],
+    system_message=QA_Agent_Prompt
 )
 
 question_answering_node = functools.partial(agent_node, agent=question_answering_agent, name='questionAnswering')
@@ -91,14 +96,14 @@ question_answering_node = functools.partial(agent_node, agent=question_answering
 grammar_summary_agent = create_tutor_agent(
     agentName='grammarSummary',
     llm=llm,
-    tools=[getTutorPrompt, create_progress_report],
+    tools=[getLearningContent, create_progress_report],
     system_message="You are the grammer summary agent, your job is to teach by summarizing the grammar of the lesson. CALL YOUR TOOL IMMEDIATELY" # add 'in Luxembourgish' for final tests
 )
 
 grammar_summary_node = functools.partial(agent_node, agent=grammar_summary_agent, name='grammarSummary')
 
 tracker_tools = [start_signal]
-tutor_tools = [getTutorPrompt, create_progress_report]
+tutor_tools = [getLearningContent, create_progress_report]
 orchestrator_tools = [getChunks]
 communicator_tools = [getFiles]
 tracker_tool_node = ToolNode(tracker_tools)
@@ -202,4 +207,4 @@ workflow.add_conditional_edges(
 
 workflow.add_edge(START, "communicator")
 
-graph = workflow.compile() 
+graph = workflow.compile(checkpointer=memory) 
