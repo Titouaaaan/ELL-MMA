@@ -7,7 +7,7 @@ from typing import Literal
 from state import message_state
 from langchain_core.messages import (
     AIMessage,
-)
+) 
 
 # define the router function
 def router_tracker(state) -> Literal["call_tool", "kill_process"]:
@@ -20,17 +20,22 @@ def router_tracker(state) -> Literal["call_tool", "kill_process"]:
     else:
         return "call_tool" #to force start_signal call
     
-def route_to_tutor(state) -> Literal["conversational", "no_more_lesson"]:
+def route_to_tutor(state) -> Literal["conversational", "reader", "listening", "questionAnswering", "grammarSummary", "no_more_lesson"]:
     print('-- tracker_call_tool router --')
     messages = state["messages"]
-    print('testing start_signal output: ', messages[-1].content)
-    return [messages[-1].content]
+    #print('testing start_signal output: ', messages[-1].content)
+    agent = messages[-1].content
+    state['messages'][-1].content += 'TUTOR AGENT PLEASE CALL YOUR TOOL'
+    return [agent]
 
 async def router_tutor(state) -> Literal["call_tool", "continue", "FINAL REPORT"]:
     ''' BUG: sometimes the tutor starts the convo without calling its tool, fix asap @urgent'''
     print('-- tutor agent router --')
     messages = state["messages"]
     last_message = messages[-1]
+
+    # print('Chat history: \n')
+    # print(messages)
 
     if last_message.tool_calls:
         return "call_tool"
@@ -107,6 +112,9 @@ async def communicator_router(state) -> Literal['continue', 'go_orchestrator', '
         message_state.update_content(msg, last_message.name)
         # WAIT FOR ACK TO SEE IF CLIENT RECIEVED AIMESSAGE
         await message_state.wait_for_acknowledgment()
+        # ideally we save in a custom memory the communicator message
+        # global custom_communicator_memory_save
+        # custom_communicator_memory_save = messages #this saves just in case but not used anywhere atm (could be useful for later?)
         return 'go_orchestrator'
 
     if isinstance(last_message, AIMessage) and last_message.content != '':

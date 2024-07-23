@@ -168,7 +168,7 @@ def start_signal() -> str:
 this function will probably need some tuning and tests to ensure there are no problems coming from the orchester
 '''
 @tool 
-def getTutorPrompt() -> str:
+def getLearningContent() -> str:
     ''' return the first element of the global prompts list '''
     prompt = global_prompts_list[0] # -> 'Content' -> retrive content
     assert type(prompt) == str, 'prompt is not a string...'

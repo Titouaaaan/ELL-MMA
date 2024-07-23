@@ -78,7 +78,7 @@ def set_agent_prompt(agentName: str, tools) -> str:
                 "THEN there are TWO OPTIONS"
                 "3. If user ACCEPTS, OUTPUT A QUERY following the template with ONLY:"
                 "Kapitel: ... \nThema: ..."
-                "and output go_orchestrator"
+                "AND output go_orchestrator"
                 "4. If user REJECTS, ask for new preferences from the user and"
                 #" call your tool updateUserPreferences with the appropriate parameters"  #? MAYBE ADD THIS STEP LATER?
                 "then go back to step 2. GENERATE a learning recommendation based on ..."
@@ -110,18 +110,19 @@ def create_tutor_agent(agentName: str, llm, tools, system_message: str): #* for 
             (
             "system",
             "you are the {agent_name} agent."
-            " IGNORE THE PREVIOUS CHAT HISTORY, you DO NOT KNOW the lesson content a the beggining of your chat"
             f"your tools are {[tool.name for tool in tools]}"
-            "follow those steps:"
-            "1. DO NOT START THE LESSON IMMEDIATELY:"
-            " FIRST ALWAYS OUTPUT call_tool to call getTutorPrompt to retrieve the lesson content"
-            "2. START INTERACTING with the user, "
+            "BEFORE TALKING TO THE USER PLEASE CALL your tool: getLearningContent"
+            "This tool retrieves the learning content you need to teach to the user"
+            "DO NOT MOVE ON TO ANOTHER STEP BEFORE THIS"    
+            "without it you cannot proceed!!"        
+            "after, YOUR TASK IS TO follow those steps:"
+            "START INTERACTING with the user, "
             "do not stop interacting with the user unless:"
-            "-they understood all the lesson material or"
+            "-they understood all the lesson material OR"
             "-they explicitely said they want to stop"
             "3. if you covered all the lesson material,"
             "call the create_progress_report tool and provide your agent name as a parameter" #! add prompt for the report generation (give template to follow)
-            "after recieving the report, write REPORT DONE"
+            "THEN output REPORT DONE in all caps"
             "{system_message}"),
             MessagesPlaceholder(variable_name="messages"),
         ]
