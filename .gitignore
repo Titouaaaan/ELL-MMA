@@ -4,4 +4,4 @@
 mma_env/
 upd_env/
 testing_env/
-**__pycache__/
+__pycache__/
