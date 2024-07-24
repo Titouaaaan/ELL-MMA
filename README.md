@@ -31,14 +31,14 @@ LLMs · MAS · BPMN · RAG.
 You can request access to read the paper written for this project:
 https://www.overleaf.com/project/6687d7e743c43e829e68264e
 
-### Installation
+# Installation
 Follow these steps to set up the project on your local machine:
 ```
 git clone https://github.com/Titouaaaan/ELL-MMA.git
 cd ELL-MMA
 ```
 
-### Running the Application
+# Running the Application
 Note: This project is currently under development and should be considered a prototype. It is not yet a finished product and may contain incomplete features and bugs that will be addressed in future updates.
 
 ## 1. Create environment
@@ -90,7 +90,7 @@ app is the FastAPI instance defined in your mainapp.py.
 The application will start and be accessible at http://127.0.0.1:8000.
 You can test out the app by clicking 'start conversation' (input the user ID 001 for instance when asked in the pop menu) and sending messages to the AI by clicking the 'send' button after writing your message.
 
-### Contact
+# Contact
 If you have any questions or need further assistance, please feel free to contact us:
 - Titouan Guerin: Titouan.Guerin@etu.sorbonne-universite.fr
 - Meryem Elfatimi: mlle.elfatimi.meryem@gmail.com

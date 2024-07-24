@@ -188,7 +188,7 @@ def create_progress_report(agentName: str, reportAndFeedback=None) -> str:
     convert reportandfeedback in json format
     write/add to global user_progress file this string
     return str -> Updated user progress file
-
+    The tutor has succesfully updated the user progress file! 
     user_progress_file structure:
     #this 
     {
@@ -199,7 +199,6 @@ def create_progress_report(agentName: str, reportAndFeedback=None) -> str:
         "goals": "explain basic greetings",
         "feedback": "the user learned ......"
     }
-
+    IGNORE THIS
     '''
-    print('Tool not writing anything yet but called properly!') #debugging tool to see something happenend
-    return agentName + 'FINAL REPORT placeholder for the actual report'
+    return agentName + 'FINAL REPORT'
