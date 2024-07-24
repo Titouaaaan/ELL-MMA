@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: gruut_lang_en
+Version: 2.0.1
+Summary: English language files for gruut tokenizer/phonemizer
+Home-page: https://github.com/rhasspy/gruut
+Author: Michael Hansen
+Author-email: mike@rhasspy.org
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Description-Content-Type: text/markdown
+
+# gruut English
+
+Language-specific files for English (en) in [gruut](https://github.com/rhasspy/gruut)

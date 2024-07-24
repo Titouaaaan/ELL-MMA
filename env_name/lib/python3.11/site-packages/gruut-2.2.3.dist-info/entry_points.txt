@@ -1,0 +1,2 @@
+[console_scripts]
+gruut = gruut.__main__:main

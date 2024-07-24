@@ -1,0 +1,2 @@
+[console_scripts]
+sudachipy = sudachipy.command_line:main

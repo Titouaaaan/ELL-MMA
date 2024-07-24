@@ -1,0 +1,54 @@
+Metadata-Version: 2.1
+Name: g2pkk
+Version: 0.1.2
+Summary: g2pkk: g2p module for Korean(cross platform)
+Home-page: https://github.com/harmlessman/g2pkk
+Author: harmlessman
+Author-email: harmlessman17@gmail.com
+License: Apache License 2.0
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: jamo
+Requires-Dist: nltk
+
+# g2pkk
+This is a cross-platform g2p for Korean.
+
+g2pkk is a library that made [Kyubyong's g2pk](https://github.com/Kyubyong/g2pK) work in Windows.
+The reason why g2pk does not work well in Windows is that the `mecab`, the morpheme analyzer used by g2pk, causes build errors in Windows.
+g2pkk uses a different morpheme analyzer depending on the operating system.
+Windows uses [eunjeon](https://github.com/koshort/pyeunjeon), which enables mecab to be used in Windows, and other operating systems use [python-mecab-ko](https://github.com/jonghwanhyeon/python-mecab-ko), which was previously used in g2pk.
+
+Install g2pkk and make sure that a morpheme analyzer exists for the operating system of the system you are using for the first time, and if not, proceed with the installation automatically.
+
+## Requirements
+* python >= 3.6
+* jamo
+* nltk
+
+
+## Installation
+```
+pip install g2pkk
+```
+
+
+## How To Use
+g2pkk uses same syntaxes as g2pk.
+```
+>>> from g2pkk import G2p
+>>> g2p = G2p("포상은 열심히 한 아이에게만 주어지기 때문에 포상인 것입니다.")
+>>> g2p("포상으 녈심히 하 나이에게만 주어지기 때무네 포상인 거심니다.")
+
+```
+If you want more information, check [g2pk](https://github.com/Kyubyong/g2pK)
+
